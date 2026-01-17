@@ -588,6 +588,7 @@ select.profile-input {
 }
 
 .profile-input[type="number"] {
+  appearance: none;
   -moz-appearance: textfield;
 }
 

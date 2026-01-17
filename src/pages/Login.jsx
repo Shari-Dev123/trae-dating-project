@@ -48,15 +48,25 @@ function Login() {
       setSuccess('Login successful!')
 
       // Check if profile exists
-      const profileRes = await axios.get(`${import.meta.env.VITE_API_PROFILE}/me`, {
-        headers: { Authorization: `Bearer ${res.data.token}` }
-      })
+      try {
+        const profileRes = await axios.get(`${import.meta.env.VITE_API}/profile/me`, {
+          headers: { Authorization: `Bearer ${res.data.token}` }
+        })
 
-      if (!profileRes.data) {
-        setSuccess('Please create your profile first!')
-        setTimeout(() => navigate('/profile'), 1200)
-      } else {
-        setTimeout(() => navigate('/dashboard'), 1200)
+        // Profile exists - go to dashboard
+        if (profileRes.data) {
+          setTimeout(() => navigate('/dashboard'), 1200)
+        }
+        
+      } catch (profileErr) {
+        // Profile doesn't exist (404) or error - go to profile creation
+        if (profileErr.response?.status === 404) {
+          setSuccess('Please create your profile first!')
+          setTimeout(() => navigate('/profile'), 1200)
+        } else {
+          // For any other error, also redirect to profile
+          setTimeout(() => navigate('/profile'), 1200)
+        }
       }
 
     } catch (err) {
